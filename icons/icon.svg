@@ -1,0 +1,30 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- full-bleed background (safe for maskable icons) -->
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#16161f"/>
+      <stop offset="1" stop-color="#08080c"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" fill="url(#bg)"/>
+
+  <!-- clock face, kept within the central safe zone -->
+  <g transform="translate(256 256)">
+    <circle r="150" fill="none" stroke="#5b9dff" stroke-width="16"/>
+
+    <!-- 12 / 3 / 6 / 9 tick marks -->
+    <g stroke="#f5f5f7" stroke-width="12" stroke-linecap="round" opacity="0.85">
+      <line x1="0" y1="-120" x2="0" y2="-95"/>
+      <line x1="120" y1="0" x2="95" y2="0"/>
+      <line x1="0" y1="120" x2="0" y2="95"/>
+      <line x1="-120" y1="0" x2="-95" y2="0"/>
+    </g>
+
+    <!-- hands posed at ~10:09 -->
+    <g stroke="#f5f5f7" stroke-linecap="round">
+      <line x1="0" y1="0" x2="-52" y2="-52" stroke-width="16"/>   <!-- hour -->
+      <line x1="0" y1="0" x2="60" y2="-86" stroke-width="13"/>    <!-- minute -->
+    </g>
+    <circle r="14" fill="#5b9dff"/>
+  </g>
+</svg>
