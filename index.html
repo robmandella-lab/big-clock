@@ -336,6 +336,7 @@
     <div class="field-label">…or upload a .txt file</div>
     <div class="row"><input type="file" id="tpFile" accept=".txt,text/plain"></div>
     <div class="panel-actions">
+      <button class="btn" id="tpClear">Clear</button>
       <button class="btn" id="tpCancel">Cancel</button>
       <button class="btn primary" id="tpStart">Start</button>
     </div>
@@ -766,6 +767,13 @@
     }
 
     scriptBtn.addEventListener('click', openTpPanel);
+    document.getElementById('tpClear').addEventListener('click', () => {
+      tpInput.value = '';
+      tpFile.value = '';
+      tpText.textContent = '';
+      localStorage.removeItem('tpScript');
+      tpInput.focus();
+    });
     document.getElementById('tpCancel').addEventListener('click', closeAllPanels);
     document.getElementById('tpStart').addEventListener('click', startTp);
     tpFile.addEventListener('change', () => {
