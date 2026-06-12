@@ -87,7 +87,17 @@
       align-items: flex-start;
       gap: 1.2rem;
     }
-    #timerCorner, #swCorner { display: none; flex-direction: column; align-items: flex-start; }
+    #timerCorner { display: none; flex-direction: column; align-items: flex-start; }
+    /* Stopwatch lives in its own bottom-right corner */
+    #swCorner {
+      display: none;
+      position: fixed;
+      right: max(1.5rem, env(safe-area-inset-right));
+      bottom: max(1.5rem, env(safe-area-inset-bottom));
+      flex-direction: column;
+      align-items: flex-end;
+      text-align: right;
+    }
     #timerCorner .timer-digits, #swCorner .timer-digits { font-size: clamp(2.5rem, 13vw, 11rem); }
     #timerCorner .timer-digits { color: var(--accent); }
     #swCorner .timer-digits { color: var(--fg); }
@@ -190,6 +200,7 @@
     body.tp-active #timerReplace,
     body.tp-active #swReplace,
     body.tp-active #cornerStack,
+    body.tp-active #swCorner,
     body.tp-active #toolbar { display: none !important; }
     #tpView { position: fixed; inset: 0; overflow: hidden; display: none; z-index: 5; }
     body.tp-active #tpView { display: block; }
@@ -247,16 +258,18 @@
     <div class="timer-label">Elapsed</div>
   </div>
 
-  <!-- Bottom-left stack: timer + stopwatch -->
+  <!-- Bottom-left: timer -->
   <div id="cornerStack">
-    <div id="swCorner">
-      <div class="timer-label">Elapsed</div>
-      <div class="timer-digits">0:00</div>
-    </div>
     <div id="timerCorner">
       <div class="timer-label">Timer</div>
       <div class="timer-digits">0:00</div>
     </div>
+  </div>
+
+  <!-- Bottom-right: stopwatch -->
+  <div id="swCorner">
+    <div class="timer-label">Elapsed</div>
+    <div class="timer-digits">0:00</div>
   </div>
 
   <!-- Teleprompter -->
@@ -309,7 +322,7 @@
     <div class="field-label">Where should it show?</div>
     <div class="row">
       <button class="btn preset" data-swmode="replace" style="flex:1">Replace clock</button>
-      <button class="btn preset" data-swmode="corner" style="flex:1">Below, bottom-left</button>
+      <button class="btn preset" data-swmode="corner" style="flex:1">Below, bottom-right</button>
     </div>
     <div class="panel-actions">
       <button class="btn" id="swCancel">Cancel</button>
