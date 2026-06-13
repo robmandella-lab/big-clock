@@ -23,7 +23,7 @@ touch = "data:image/png;base64," + b64("icons/apple-touch-icon.png")
 # Inline manifest (best-effort: lets desktop Chrome offer install when hosted)
 manifest = {
     "name": "Clock", "short_name": "Clock",
-    "display": "standalone", "background_color": "#0a0a0f", "theme_color": "#0a0a0f",
+    "display": "standalone", "background_color": "#000000", "theme_color": "#000000",
     "icons": [
         {"src": icon192, "sizes": "192x192", "type": "image/png"},
         {"src": icon512, "sizes": "512x512", "type": "image/png"},

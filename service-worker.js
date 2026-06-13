@@ -1,6 +1,6 @@
 // Offline cache for the Clock app.
 // Bump CACHE_VERSION whenever you change the app's files to force an update.
-const CACHE_VERSION = 'clock-v9';
+const CACHE_VERSION = 'clock-v10';
 const ASSETS = [
   './',
   './index.html',
