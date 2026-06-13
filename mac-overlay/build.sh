@@ -6,7 +6,11 @@ APP="build/Big Clock.app"
 rm -rf build
 mkdir -p "$APP/Contents/MacOS" "$APP/Contents/Resources"
 
-swiftc -O main.swift -o "$APP/Contents/MacOS/BigClock"
+# Universal binary: runs on Apple Silicon and Intel Macs
+swiftc -O main.swift -target arm64-apple-macos12 -o /tmp/bigclock-arm64
+swiftc -O main.swift -target x86_64-apple-macos12 -o /tmp/bigclock-x86_64
+lipo -create /tmp/bigclock-arm64 /tmp/bigclock-x86_64 -output "$APP/Contents/MacOS/BigClock"
+rm -f /tmp/bigclock-arm64 /tmp/bigclock-x86_64
 cp AppIcon.icns "$APP/Contents/Resources/"
 
 cat > "$APP/Contents/Info.plist" <<'EOF'
