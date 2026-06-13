@@ -7,11 +7,21 @@
 import Cocoa
 import WebKit
 
-final class AppDelegate: NSObject, NSApplicationDelegate {
+final class AppDelegate: NSObject, NSApplicationDelegate, WKNavigationDelegate {
     var window: NSWindow!
     var webView: WKWebView!
     var statusItem: NSStatusItem!
     var savedFrame: NSRect?          // frame to restore when leaving full screen
+
+    // WKWebView repaints an opaque white backing after every navigation, which
+    // would show through the transparent web page. Re-assert transparency on
+    // each load stage so the window stays genuinely see-through.
+    func makeWebViewTransparent() {
+        webView.setValue(false, forKey: "drawsBackground")
+        if #available(macOS 12.0, *) { webView.underPageBackgroundColor = .clear }
+    }
+    func webView(_ wv: WKWebView, didCommit nav: WKNavigation!) { makeWebViewTransparent() }
+    func webView(_ wv: WKWebView, didFinish nav: WKNavigation!) { makeWebViewTransparent() }
 
     let appURL = URL(string: "https://robmandella-lab.github.io/big-clock/?transparent")!
 
@@ -38,8 +48,8 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
         let config = WKWebViewConfiguration()
         webView = WKWebView(frame: window.contentLayoutRect, configuration: config)
-        webView.setValue(false, forKey: "drawsBackground")
-        if #available(macOS 12.0, *) { webView.underPageBackgroundColor = .clear }
+        webView.navigationDelegate = self
+        makeWebViewTransparent()
         webView.autoresizingMask = [.width, .height]
         webView.load(URLRequest(url: appURL))
 
