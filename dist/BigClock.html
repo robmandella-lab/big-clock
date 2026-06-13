@@ -361,6 +361,13 @@
     <div class="row"><textarea id="tpInput" placeholder="Paste or type your script here…"></textarea></div>
     <div class="field-label">…or upload a .txt file</div>
     <div class="row"><input type="file" id="tpFile" accept=".txt,text/plain"></div>
+    <div class="field-label">Background (for overlay app / OBS)</div>
+    <div class="row">
+      <div class="seg" id="tpBgSeg" style="width:100%">
+        <button data-bg="solid">Solid</button>
+        <button data-bg="clear">See-through</button>
+      </div>
+    </div>
     <div class="panel-actions">
       <button class="btn" id="tpClear">Clear</button>
       <button class="btn" id="tpCancel">Cancel</button>
@@ -369,9 +376,21 @@
   </div>
 
   <script>
-    /* Transparent mode for OBS browser sources / overlay apps */
-    if (new URLSearchParams(location.search).has('transparent')) {
-      document.documentElement.classList.add('transparent');
+    /* See-through background for the overlay app / OBS browser sources.
+       The Script panel toggle (saved choice) wins; the ?transparent URL
+       parameter sets the default the first time. */
+    function setTransparent(on, save) {
+      document.documentElement.classList.toggle('transparent', on);
+      if (save) localStorage.setItem('tpTransparent', String(on));
+      document.querySelectorAll('#tpBgSeg button').forEach(b =>
+        b.classList.toggle('active', (b.dataset.bg === 'clear') === on));
+    }
+    {
+      const stored = localStorage.getItem('tpTransparent');
+      const on = stored !== null
+        ? stored === 'true'
+        : new URLSearchParams(location.search).has('transparent');
+      setTransparent(on, false);
     }
 
     /* ============== CLOCK ============== */
@@ -798,6 +817,10 @@
     }
 
     scriptBtn.addEventListener('click', openTpPanel);
+    document.getElementById('tpBgSeg').addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      setTransparent(b.dataset.bg === 'clear', true);
+    });
     document.getElementById('tpClear').addEventListener('click', () => {
       tpInput.value = '';
       tpFile.value = '';
