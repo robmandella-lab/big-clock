@@ -202,7 +202,7 @@
     .row { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 0.9rem; }
     .preset { flex: 1 1 28%; min-width: 64px; text-align: center; padding: 0.6rem 0; }
     .field-label { font-size: 0.78rem; opacity: 0.55; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem; }
-    #customTime {
+    #customTime, #tpTimerInput {
       font: inherit; font-size: 1.4rem; font-weight: 600; font-variant-numeric: tabular-nums;
       width: 100%; text-align: center;
       color: var(--fg); background: color-mix(in srgb, var(--fg) 8%, transparent);
@@ -415,6 +415,17 @@
         <button data-show="timer">Timer</button>
         <button data-show="sw">Stopwatch</button>
       </div>
+    </div>
+    <div id="tpTimerWrap" style="display:none">
+      <div class="field-label">Countdown length (starts with the teleprompter)</div>
+      <div class="row" id="tpTimerPresets">
+        <button class="btn preset" data-min="5">5 min</button>
+        <button class="btn preset" data-min="10">10 min</button>
+        <button class="btn preset" data-min="15">15 min</button>
+        <button class="btn preset" data-min="20">20 min</button>
+        <button class="btn preset" data-min="30">30 min</button>
+      </div>
+      <div class="row"><input id="tpTimerInput" type="text" inputmode="numeric" placeholder="minutes, or mm:ss (e.g. 5:00)"></div>
     </div>
     <div class="field-label">Clock corner</div>
     <div class="row">
@@ -690,7 +701,7 @@
     });
 
     document.addEventListener('keydown', e => {
-      if (e.target === customTime) return;
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
       const k = e.key.toLowerCase();
       if (k === 't') {
         use24h = !use24h; localStorage.setItem('use24h', String(use24h)); renderClock();
@@ -860,6 +871,11 @@
         b.classList.toggle('active', tpShow[b.dataset.show]));
       document.querySelectorAll('#tpCornerSeg button').forEach(b =>
         b.classList.toggle('active', b.dataset.corner === tpClockCorner));
+      // Reveal the countdown-length field only when the Timer overlay is on
+      const wrap = document.getElementById('tpTimerWrap');
+      if (wrap) wrap.style.display = tpShow.timer ? 'block' : 'none';
+      const ti = document.getElementById('tpTimerInput');
+      if (ti && !ti.value) ti.value = localStorage.getItem('tpTimerLen') || '';
     }
     applyTpOverlays();
 
@@ -906,6 +922,11 @@
       // If the stopwatch overlay is enabled and none is running, start one
       // so it counts up from the moment the teleprompter begins.
       if (tpShow.sw && sw.state === 'idle') swStart('corner');
+      // If the timer overlay is enabled, start the countdown from the chosen length.
+      if (tpShow.timer && timer.state === 'idle') {
+        const sec = parseCustom(document.getElementById('tpTimerInput').value);
+        if (sec > 0) startTimer(sec);
+      }
       tpApplyStyle(); tpRender(); tpUpdatePlayBtn();
       closeAllPanels();
       cancelAnimationFrame(tp.raf);
@@ -936,12 +957,22 @@
       tpShow[k] = !tpShow[k];
       localStorage.setItem('tpShow' + (k === 'sw' ? 'Sw' : k === 'clock' ? 'Clock' : 'Timer'), String(tpShow[k]));
       applyTpOverlays(); syncTpPanelToggles();
+      if (k === 'timer' && tpShow.timer) document.getElementById('tpTimerInput').focus();
     });
     document.getElementById('tpCornerSeg').addEventListener('click', e => {
       const b = e.target.closest('button'); if (!b) return;
       tpClockCorner = b.dataset.corner;
       localStorage.setItem('tpClockCorner', tpClockCorner);
       applyTpOverlays(); syncTpPanelToggles();
+    });
+    document.getElementById('tpTimerPresets').addEventListener('click', e => {
+      const b = e.target.closest('button'); if (!b) return;
+      const ti = document.getElementById('tpTimerInput');
+      ti.value = b.dataset.min;
+      localStorage.setItem('tpTimerLen', ti.value);
+    });
+    document.getElementById('tpTimerInput').addEventListener('input', e => {
+      localStorage.setItem('tpTimerLen', e.target.value);
     });
     document.getElementById('tpClear').addEventListener('click', () => {
       tpInput.value = '';
