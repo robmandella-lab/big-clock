@@ -53,10 +53,18 @@
       --accent: #2563eb;
     }
     body.bg-transparent { --fg: #ffffff; background: transparent !important; }
+    /* White text + a dark outline/halo so the numbers stay visible over ANY
+       background — light desktop, white browser, or video. */
     body.bg-transparent #time, body.bg-transparent #date, body.bg-transparent #zone,
     body.bg-transparent .timer-digits, body.bg-transparent .timer-label,
     body.bg-transparent #tpClock, body.bg-transparent #tpText {
-      text-shadow: 0 2px 14px rgba(0,0,0,0.85), 0 0 5px rgba(0,0,0,0.9);
+      text-shadow:
+        0 0 4px rgba(0,0,0,0.95),
+        0 0 12px rgba(0,0,0,0.8),
+        1px 1px 0 rgba(0,0,0,0.6),
+        -1px 1px 0 rgba(0,0,0,0.6),
+        1px -1px 0 rgba(0,0,0,0.6),
+        -1px -1px 0 rgba(0,0,0,0.6);
     }
     body.bg-transparent.timer-done { animation: none; }
     body.bg-transparent.timer-done .timer-digits { animation: blink 0.7s steps(1) infinite; }
